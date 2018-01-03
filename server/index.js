@@ -1,24 +1,21 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+
+var db = require('../database-mysql');
+
 var morgan = require('morgan');
-// var items = require('../database-mysql');
 
 var app = express();
-
+var port = process.env.PORT || 3000;
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/../react-client/dist'));
 
-app.get('/items', function (req, res) {
-  items.selectAll(function(err, data) {
-    if(err) {
-      res.sendStatus(500);
-    } else {
-      res.json(data);
-    }
-  });
-});
 
-app.listen(3000, function() {
-  console.log('listening on port 3000!');
+app.get('/test', (req, res) => {
+  res.send('hello world');
+})
+
+app.listen(port, function() {
+  console.log('listening on port,', port);
 });
 

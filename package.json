@@ -2,8 +2,9 @@
   "name": "WAYN",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "/server/index.js",
   "scripts": {
+    "start": "npm run server-dev",
     "react-dev": "webpack -d --watch",
     "server-dev": "nodemon server/index.js"
   },
@@ -19,12 +20,14 @@
   "dependencies": {
     "axios": "^0.17.1",
     "body-parser": "^1.17.2",
-    "express": "^4.15.0",
+    "express": "^4.16.2",
     "jquery": "^3.1.1",
-    "morgan": "^1.9.0",
-    "mysql": "^2.13.0",
+    "mysql": "^2.15.0",
+    "mysql2": "^1.5.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "sequelize": "^4.28.6"
+    "morgan": "^1.9.0",
     "react-router-dom": "^4.2.2"
   }
 }
