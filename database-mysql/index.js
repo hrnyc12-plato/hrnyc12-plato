@@ -10,7 +10,22 @@ var knex = require('knex')({
 });
  
 var bookshelf = require('bookshelf')(knex);
- 
+
+bookshelf.knex.schema.hasTable('events').then(function(exists) {
+  if (!exists) {
+    bookshelf.knex.schema.createTable('events', function(event) {
+      event.increments('id').primary();
+      event.decimal('eventLatitude');
+      event.decimal('eventLongitude');
+      event.string('eventName', 255);
+      event.integer('eventTime');
+    })
+    .then(function(table) {
+      console.log('Created events tables', table)
+    })
+  }
+});
+
 bookshelf.knex.schema.hasTable('users').then(function(exists) {
   if (!exists) {
     bookshelf.knex.schema.createTable('users', function(user) {
@@ -18,71 +33,13 @@ bookshelf.knex.schema.hasTable('users').then(function(exists) {
       user.string('firstName', 255);
       user.string('lastName', 255);
       user.integer('phoneNumber', 100);
-      user.string('image', 255);
-      user.integer('currentLoc,');
+      user.decimal('latitude');
+      user.decimal('longitude');
+      user.integer('event_id').unsigned();
+      user.foreign('event_id').references('events.id')
       user.timestamps();
     }).then(function (table) {
       console.log('Created Table', table);
     });
   }
 });
-
-
-// const Sequelize = require('sequelize');
-// const sequelize = new Sequelize('WAYN_HRNYC12', 'Administrator', 'bananas18', {
-//   host: 'wayn.ccpnt53lucxn.us-east-2.rds.amazonaws.com',
-//   dialect: 'mysql',
-//   pool: {
-//     max: 5,
-//     min: 0,
-//     acquire: 30000,
-//     idle: 10000
-//   },
-//   // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators
-//   operatorsAliases: false
-// });
-
-// const User = sequelize.define('user', {
-//   id: {
-//     type: Sequelize.INTEGER, 
-//     primaryKey: true,
-//     autoIncrement: true
-//   },
-//   firstName: Sequelize.STRING,
-//   lastName: Sequelize.STRING,
-//   phoneNumber: Sequelize.INTEGER,
-//   image: Sequelize.STRING,
-//   currentLocation: Sequelize.INTEGER 
-// });
-
-// const Event = sequelize.define('event', {
-//   id: {
-//     type: Sequelize.INTEGER, 
-//     primaryKey: true,
-//     autoIncrement: true
-//   },
-//   eventLocation: Sequelize.INTEGER,
-//   eventName: Sequelize.INTEGER,
-//   eventTime: Sequelize.INTEGER
-// })
-
-// sequelize.sync({force: true})
-//   .then(() => User.create({
-//     id: 1,
-//     firstName: 'jane',
-//     lastName: 'doe',
-//     phoneNumber: 123456789
-//   }))
-//   .then(jane => {
-//     console.log(jane.toJSON());
-//   })
-// sequelize.sync({force: true})
-//   .then(() => Event.create({
-//     id: 1,
-//     eventLocation: 'hack reactor',
-//     eventName: 'hackathon',
-//     eventTime: 123456789
-//   }))
-//   .then(jane => {
-//     console.log(jane.toJSON());
-//   });
