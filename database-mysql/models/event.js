@@ -1,7 +1,7 @@
 var db = require('../index');
 
 var User = bookshelf.Model.extend({
-    tableName: 'users'
+    tableName: 'events'
   });
 
-module.exports = User;
+module.exports = Event;

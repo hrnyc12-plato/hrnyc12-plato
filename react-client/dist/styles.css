@@ -1,0 +1,35 @@
+.addAttendee {
+  padding: 1% 2%;
+  margin: 1% 1%;
+  width: 40%;
+  min-width: 40%;
+  float: left;
+}
+
+.attendeeList {
+  float: left;
+  width: 35%;
+  min-width: 35%;
+}
+
+.attendeeInfo {
+  height: auto;
+  width: 80%;
+  min-width: 80%;
+}
+
+ul {
+  list-style: none;
+}
+
+.createEvent, .createEvent form {
+  height: auto;
+}
+
+.createEventButton {
+  float: left;
+}
+
+input {
+  margin: .5%;
+}
