@@ -1,3 +1,5 @@
+// import { read } from 'fs';
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var keys = require('../config.js');
@@ -6,20 +8,15 @@ var User = require('../database-mysql/models/user');
 var Event = require('../database-mysql/models/event');
 
 var morgan = require('morgan');
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 var knex = require('knex')
 var coll = require('../database-mysql/collections/users.js')
-=======
-var userControllers = require('../database-mysql/controllers/userController.js')
-var eventController = require('../database-mysql/controllers/eventController.js')
->>>>>>> Add small changes to server and controllers
-=======
 
 var Users = require('../database-mysql/collections/users.js')
 var userControllers = require('../database-mysql/controllers/userController.js')
 var eventController = require('../database-mysql/controllers/eventController.js')
->>>>>>> feat/userPut
+
+var controller = require('../database-mysql/controllers/userController');
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -27,8 +24,6 @@ var port = process.env.PORT || 3000;
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/../react-client/dist'));
 app.use(bodyParser.json());
-
-app.put('/user', userControllers.put);
 
 // below is dummy data that represents results from the database as part of the post to /event
 var queryResults = { 
@@ -76,23 +71,21 @@ const client = require('twilio')(keys.accountSid, keys.authToken);
 
 // below would actually be put inside the post, but I used the test route to make sure this worked
 
-app.get('/test', (req, res) => {
-  queryResults.users.forEach( user => {
-    client.messages
+var twilioText = (user) => {
+  console.log('userObj',user);
+  client.messages
       .create({
-        to: `+1${user.phoneNumber}`,
+        to: `+1${user.attributes.phoneNumber}`,
         from: `${keys.twilioNumber}`,
-        body: `Hey ${user.firstName} ${user.lastName}, you've been invited to my event. Please click on the link below to share your location:
-        http://localhost:3000/#/event/${queryResults.event.id}/?userId=${user.id}`,
+        body: `Hey ${user.attributes.firstName} ${user.attributes.lastName}, you've been invited to my event. Please click on the link below to share your location:
+        http://localhost:3000/#/event/${user.attributes.eventId}/?userId=${user.id}`,
     })
     .then((message) => console.log('testing', message.sid))
     .catch((err) => {
       console.error('Could not notify administrator');
       console.error(err);
     });
-  })
-  res.send('hello world');
-})
+};
 
 app.get('/event', (req, res) => {
   var eventId = req.param('eventId');
@@ -112,27 +105,39 @@ app.listen(port, function() {
   console.log('listening on port,', port);
 });
 
-app.post('/usersDB', (req, res) => {
-  coll.create({
-   
-  })
-  .then((result) => {
-    res.json({ success: true, message: 'ok' });     // respond back to request
-  })
-  .catch((error) => console.log(error))
-})
+app.post('/event', (req, res) => {
+  console.log('data from the client', req.body);
+  let organizer = {
+    firstName: req.body.organizerFirstName,
+    lastName: req.body.organizerLastName,
+    phoneNumber: req.body.organizerPhoneNumber
+  };
 
-app.post('/eventsDB', (req, res) => {
-    console.log('insert functino invoked in server')
+  let event = {
+    eventLatitude: req.body.location.lat,
+    eventLongitude: req.body.location.lng,
+    eventName: req.body.eventName,
+    eventTime: req.body.time
+  };
 
-  coll.create({
+  let attendees = req.body.attendees;
+  attendees.push(organizer);
+  console.log('the attendees should include the organizer', attendees);
+
+  controller.insert(attendees, event, twilioText)
+    .then(() => res.sendStatus(200));
+});
+// app.post('/eventsDB', (req, res) => {
+//     console.log('insert functino invoked in server')
+
+//   coll.create({
      
-  })
-  .then((result) => {
-    res.json({ success: true, message: 'ok' });     // respond back to request
-  })
-  .catch((error) => console.log(error))
-})
+//   })
+//   .then((result) => {
+//     res.json({ success: true, message: 'ok' });     // respond back to request
+//   })
+//   .catch((error) => console.log(error))
+// })
 
 //THIS WILL BE USED in the ASYNC DB CALLS TO SEND THE 
 //URL AFTER EACH USER IS SAVED AND THE EVENT IS CREATED

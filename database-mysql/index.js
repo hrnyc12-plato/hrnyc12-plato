@@ -12,6 +12,21 @@ var knex = require('knex')({
  
 var bookshelf = require('bookshelf')(knex);
 
+bookshelf.knex.schema.hasTable('events').then(function(exists) {
+  if (!exists) {
+    bookshelf.knex.schema.createTable('events', function(event) {
+      event.increments('id').primary();
+      event.decimal('eventLatitude');
+      event.decimal('eventLongitude');
+      event.string('eventName', 255);
+      event.integer('eventTime');
+    })
+    .then(function(table) {
+      console.log('Created events tables', table)
+    })
+  }
+});
+
 bookshelf.knex.schema.hasTable('users').then(function(exists) {
   if (!exists) {
     bookshelf.knex.schema.createTable('users', function(user) {
@@ -23,6 +38,10 @@ bookshelf.knex.schema.hasTable('users').then(function(exists) {
       user.decimal('latitude');
       user.decimal('longitude');
       user.integer('eventId');
+<<<<<<< HEAD
+=======
+      user.foreign('eventId').references('event.id');
+>>>>>>> feat/controller
       user.timestamps();
     }).then(function (table) {
       console.log('Created Table', table);
@@ -30,6 +49,7 @@ bookshelf.knex.schema.hasTable('users').then(function(exists) {
   }
 });
 
+<<<<<<< HEAD
 bookshelf.knex.schema.hasTable('events').then(function(exists) {
   if (!exists) {
     bookshelf.knex.schema.createTable('events', function(event) {
@@ -44,5 +64,8 @@ bookshelf.knex.schema.hasTable('events').then(function(exists) {
     })
   }
 });
+=======
+
+>>>>>>> feat/controller
 
 module.exports = bookshelf;
