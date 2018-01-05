@@ -10,7 +10,6 @@ const {
 const { MarkerWithLabel } = require("react-google-maps/lib/components/addons/MarkerWithLabel");
 var textColorBackground = ['floralwhite','lightblue', 'lavender', 'powderblue', 'peachpuff', 'palegreen', 'wheat'];
 
-
 const AttendeeMap = compose(
   withProps({
     googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyA3wPEP1-hGvDC0_cmmKv3JRYiKIJukCCU&v=3.exp&libraries=geometry,drawing,places",
