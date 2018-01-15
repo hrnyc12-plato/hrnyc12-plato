@@ -1,5 +1,4 @@
 package-lock.json
 node_modules
-react-client/dist/bundle.js
-config.js
 npm-debug.log
+react-client/dist/bundle.js

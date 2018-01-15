@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
-import muiThemeable from 'material-ui/styles/muiThemeable';
 
 class LandingPage extends React.Component {
   constructor (props) {
@@ -21,9 +20,6 @@ class LandingPage extends React.Component {
 
   render () {
     const style = {
-      // height: 100,
-      // width: 100,
-      margin: 25,
       textAlign: 'center',
       display: 'inline-block',
       padding: 25,
@@ -31,7 +27,6 @@ class LandingPage extends React.Component {
     };
 
     return (
-    <div className="landingPage">
     <Paper style={style} zDepth={3}>
       <h1>WAYN</h1>
       <h3> Tired of being the first one there? Set up an event with us and we'll take care of the rest. </h3>
@@ -43,7 +38,6 @@ class LandingPage extends React.Component {
       </label>
       <Link to={'/event/' + this.state.eventId}><RaisedButton primary='true'>Submit</RaisedButton></Link>
     </Paper>
-    </div>
     )
   }
 }

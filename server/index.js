@@ -4,7 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 
-var keys = require('../config.js');
+// var keys = require('../config.js');
 var db = require('../database-mysql');
 var User = require('../database-mysql/models/user');
 var Event = require('../database-mysql/models/event');
