@@ -69,6 +69,9 @@ var insert = (users, event, twilio) => {
   })
 }
 
+// Get all events for said user and return array of Event objects
+// const post = ()
+
 module.exports.put = put;
 module.exports.insert = insert;
 module.exports.post = post;
