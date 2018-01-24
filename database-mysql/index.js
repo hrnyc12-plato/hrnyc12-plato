@@ -33,7 +33,7 @@ bookshelf.knex.schema.hasTable('users').then(function(exists) {
       user.increments('id').primary();
       user.string('firstName', 255);
       user.string('lastName', 255);
-      user.integer('phoneNumber');
+      user.string('phoneNumber', 15);
       user.decimal('latitude', 15, 10);
       user.decimal('longitude', 15, 10);
       user.integer('eventId');

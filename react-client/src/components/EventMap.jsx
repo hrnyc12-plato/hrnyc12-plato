@@ -1,8 +1,12 @@
 import React from 'react';
 import axios from 'axios';
+import RaisedButton from 'material-ui/RaisedButton';
 import AttendeeMap from './AttendeeMap.jsx';
 import AddAttendee from './AddAttendee.jsx';
 import Paper from 'material-ui/Paper';
+import Lyft from './lyft.jsx';
+import { Link } from 'react-router-dom';
+import ChatWindow from './ChatWindow.jsx';
 
 class EventMap extends React.Component {
   constructor (props) {
@@ -11,29 +15,36 @@ class EventMap extends React.Component {
      event: {
         eventName: 'Default',
         eventTime: '12:00',
-        eventLatitude: 40.7505, 
+        eventLatitude: 40.7505,
         eventLongitude: -73.9764
       },
       users : [],
+      lyftTime: 0,
+      lyftCost: 0,
       userLocation: {
         lat: '',
         lng: ''
       },
-      userId: this.getUserId(),
-      eventId: this.getEventId()
+      userId: '',
+      eventId: this.props.eventId,
+      username: this.props.userName,
+      imgUrl: this.props.imgUrl
     }
 
     this.handleNewAttendee = this.handleNewAttendee.bind(this);
     this.getServerData = this.getServerData.bind(this)
+    this.getLyftEstimates = this.getLyftEstimates.bind(this)
     this.getUserLocation();
+    this.getLyftEstimates()
   }
-  
+
   componentDidMount () {
     this.getServerData();
     setInterval(this.getServerData, 1000 * 30);
   }
 
   handleNewAttendee (attendee) {
+    console.log('adding attendee', attendee)
     if(this.isUniqueAttendee(attendee)) {
       axios.post('/user', {
         attendee: attendee,
@@ -78,12 +89,34 @@ class EventMap extends React.Component {
       lat: this.state.userLocation.lat,
       lng: this.state.userLocation.lng
     })
-    .then((response) => console.log(response))
+    .then((response) => {
+      console.log(response);
+    })
     .catch((error) => console.error(error));
   }
 
+  getLyftEstimates() {
+    var payload = {
+      user : {
+        lat : this.state.userLocation.lat,
+        lng : this.state.userLocation.lng
+      },
+      event : {
+        lat : this.state.event.eventLatitude,
+        lng : this.state.event.eventLongitude
+      }
+    }
+
+    axios.post('/server/lyft', payload).then((data) => {
+      console.log('hiya', this)
+      var cost = data.data.cost_estimates[2].estimated_cost_cents_max
+      var time = data.data.cost_estimates[2].estimated_duration_seconds
+      this.setState({lyftCost: cost, lyftTime: time})
+    })
+  }
+
   getUserId () {
-    return this.props.location.search.replace('?userId=', '');
+    // return this.props.location.search.replace('?userId=', '');
   }
 
   getUserLocation () {
@@ -104,26 +137,38 @@ class EventMap extends React.Component {
   }
 
   render () {
+    console.log('where is this props coming form!?????', this.props)
     let style = {
       paper : {
         margin: 20,
         textAlign: 'center',
         display: 'inline-block',
-        padding: 5,
-        marginLeft: '18%'
+        padding: 5
       }
     }
+    const styles = theme => ({
+  badge: {
+    margin: `0 ${theme.spacing.unit * 2}px`,
+  },
+})
     return (
       <Paper style={style.paper} zDepth={2}>
-        <h1> Wayn </h1>
+        <Link to='/' style={{textDecoration: "none", "color": "#000"}}>
+          <h1>
+            <RaisedButton style={{"backgroundColor": "#FFF", "paddingLeft": "2%", "paddingRight": "2%", "paddingTop": "1%", "paddingBottom": "1%"}}>Wayn</RaisedButton>
+          </h1>
+        </Link>
         <h4> Your Event </h4>
         {this.state.users.length ? <AttendeeMap users={this.state.users} event={this.state.event} directions={[]}/>
         : <p>Map will be rendered when someone uploads their location! </p>}
         <AddAttendee addNewAttendee={this.handleNewAttendee} />
+        <div style={{float:'right'}}>
+        <Lyft getLyftEstimates={this.getLyftEstimates} cost={this.state.lyftCost} time={this.state.lyftTime} />
+        </div>
+        <ChatWindow eventId={this.state.eventId} username={this.state.username} img={this.state.imgUrl}/>
       </Paper>
     );
   }
 }
 
 export default EventMap;
-
